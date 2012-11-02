@@ -32,10 +32,10 @@
 		<dependency org="com.vaadin" name="vaadin-client-compiler" rev="&vaadin.version;" conf="widgetset-compile->default" />
 		
 		<!-- Apache Shiro -->
-        <!-- <dependency org="org.apache.shiro" name="shiro-core" rev="&shiro.version;" /> -->
-        <!-- <dependency org="org.apache.shiro" name="shiro-web" rev="&shiro.version;" /> -->
-        <!-- <dependency org="org.apache.shiro" name="shiro-aspectj" rev="&shiro.version;" /> -->
-        <!-- <dependency org="org.apache.shiro" name="shiro-guice" rev="&shiro.version;" /> -->
+        <dependency org="org.apache.shiro" name="shiro-core" rev="&shiro.version;" />
+        <dependency org="org.apache.shiro" name="shiro-web" rev="&shiro.version;" />
+        <dependency org="org.apache.shiro" name="shiro-aspectj" rev="&shiro.version;" />
+        <dependency org="org.apache.shiro" name="shiro-guice" rev="&shiro.version;" />
 
 		<!-- Google Guava Jars -->
         <dependency org="com.google.guava" name="guava" rev="&guava.version;"/>
@@ -59,4 +59,3 @@
         <dependency org="org.hsqldb" name="hsqldb" rev="&hsqldb.version;"/>
 	</dependencies>
 </ivy-module>
-    

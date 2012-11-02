@@ -11,6 +11,27 @@
 		<param-name>productionMode</param-name>
 		<param-value>false</param-value>
 	</context-param>
+	
+	<listener>
+		<listener-class>org.apache.shiro.web.env.EnvironmentLoaderListener</listener-class>
+	</listener>
+
+	<filter>
+		<filter-name>SecurityFilter</filter-name>
+		<filter-class>org.apache.shiro.web.servlet.ShiroFilter</filter-class>
+		<init-param>
+			<param-name>shiroConfigLocations</param-name>
+			<param-value>/WEB-INF/security.ini</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>SecurityFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+		<dispatcher>REQUEST</dispatcher> 
+		<dispatcher>FORWARD</dispatcher> 
+		<dispatcher>INCLUDE</dispatcher> 
+		<dispatcher>ERROR</dispatcher>
+	</filter-mapping>
 
 	<filter>
 		<filter-name>ApplicationFilter</filter-name>
@@ -20,5 +41,9 @@
 		<filter-name>ApplicationFilter</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
+	
+	<session-config>
+		<session-timeout>30</session-timeout>
+	</session-config>
 	
 </web-app>

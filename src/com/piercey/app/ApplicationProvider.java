@@ -16,7 +16,7 @@ public class ApplicationProvider extends UIProvider
 	@Override
 	public UI createInstance(UICreateEvent event)
 	{
-		return ApplicationFilter.getInjector().getProvider(applicationClass).get();
+		return ApplicationFilter.getApplicationInjector().getProvider(applicationClass).get();
 	}
 
 	@Override

@@ -1,18 +1,23 @@
 package com.piercey.app;
 
 import com.google.inject.Inject;
+import com.google.inject.Injector;
 import com.google.inject.name.Named;
+import com.piercey.app.security.SecurityCenter;
+import com.piercey.app.views.ApplicationView;
+import com.piercey.app.views.LoginView;
+import com.vaadin.navigator.Navigator;
+import com.vaadin.navigator.View;
+import com.vaadin.navigator.ViewProvider;
 import com.vaadin.server.VaadinRequest;
-import com.vaadin.shared.ui.label.ContentMode;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
 
 public class ApplicationUI extends UI
 {
 	private static final long serialVersionUID = 6786857451870760567L;
-
+	public static final String LOGINVIEW = LoginView.NAME;
+	private Navigator navigator;
+	
 	@Inject
 	@Named("title")
 	private String title = "Vaadin Application UI (default title)";
@@ -24,15 +29,44 @@ public class ApplicationUI extends UI
 	@Override
 	public void init(VaadinRequest request)
 	{
-		getPage().setTitle(title);
+		navigator = new Navigator(this, getContent());
+		navigator.addProvider(new ViewProvider()
+		{
+			private static final long serialVersionUID = -3308179049710571790L;
 
-		Label label = new Label(version, ContentMode.HTML);
-		label.setSizeUndefined();
+			@Override
+			public String getViewName(String viewAndParameters)
+			{
+				if (viewAndParameters == null || viewAndParameters.length() == 0)
+					return ApplicationView.class.getSimpleName();
+				
+				String[] parts = viewAndParameters.split("/");
+				return parts[0];
+			}
+			
+			@Override
+			public View getView(String viewName)
+			{
+				final Injector injector = ApplicationFilter.getSecurityInjector();
+				final String packageName = ApplicationView.class.getPackage().getName();
+				Class<?> classType = ApplicationView.class;
 
-		VerticalLayout layout = new VerticalLayout(label);
-		layout.setSizeFull();
-		layout.setComponentAlignment(label, Alignment.MIDDLE_CENTER);
+				try
+				{
+					classType = Class.forName(packageName + "." + viewName);
+				}
+				catch (ClassNotFoundException e)
+				{
+				}
+				
+				return (View) injector.getInstance(classType);
+			}
+		});
+		
+		final String viewName = (SecurityCenter.isAuthenticated())
+				? ApplicationView.NAME
+				: LoginView.NAME;
 
-		setContent(layout);
+		navigator.navigateTo(viewName);
 	}
 }
