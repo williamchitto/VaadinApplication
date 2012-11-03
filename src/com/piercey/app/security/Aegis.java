@@ -9,20 +9,21 @@ import org.apache.shiro.authc.LockedAccountException;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.piercey.app.Utility;
+import com.piercey.app.ApplicationLogger;
+import com.piercey.app.security.entity.Account;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 
-public class SecurityCenter
+public class Aegis
 {
-	private static final Logger logger = LoggerFactory.getLogger(SecurityCenter.class);
+	private static final ApplicationLogger logger = new ApplicationLogger(Aegis.class);
 
 	public static boolean login(String username, String password, boolean rememberMe)
 	{
+		logger.executionTrace();
+
 		final Subject subject = SecurityUtils.getSubject();
+		final Account account = new Account(username, password, "zz"); // use to hash the password
 
 		try
 		{
@@ -30,7 +31,7 @@ public class SecurityCenter
 
 			if (!subject.isAuthenticated())
 			{
-				final UsernamePasswordToken token = new UsernamePasswordToken(username, password);
+				final UsernamePasswordToken token = new UsernamePasswordToken(username, account.getPassword());
 				token.setRememberMe(rememberMe);
 
 				subject.login(token);
@@ -56,12 +57,12 @@ public class SecurityCenter
 		}
 		catch (AuthenticationException e)
 		{
-			logger.error(Utility.unwindStack(e));
+			logger.error(e);
 			Notification.show("Unknown Security Error", Type.WARNING_MESSAGE);
 		}
 		catch (Exception e)
 		{
-			logger.error(Utility.unwindStack(e));
+			logger.error(e);
 			Notification.show("Unknown System Error", Type.WARNING_MESSAGE);
 		}
 
@@ -71,6 +72,8 @@ public class SecurityCenter
 
 	public static void logout()
 	{
+		logger.executionTrace();
+
 		final Subject subject = SecurityUtils.getSubject();
 
 		if (subject.isAuthenticated())
@@ -82,63 +85,83 @@ public class SecurityCenter
 
 	public static boolean isAuthenticated()
 	{
+		logger.executionTrace();
+
 		final Subject subject = SecurityUtils.getSubject();
 		return subject.isAuthenticated();
 	}
-	
+
 	public static String getPrincipal()
 	{
+		logger.executionTrace();
+
 		final Subject subject = SecurityUtils.getSubject();
 		return (String) subject.getPrincipal();
 	}
-	
+
 	public static boolean isRemembered()
 	{
+		logger.executionTrace();
+
 		final Subject subject = SecurityUtils.getSubject();
 		return subject.isRemembered();
 	}
-	
+
 	public static boolean isGuest()
 	{
+		logger.executionTrace();
+
 		final Subject subject = SecurityUtils.getSubject();
 		return (subject.getPrincipal() == null);
 	}
-	
+
 	public static String whoIsRemembered()
 	{
+		logger.executionTrace();
+
 		final Subject subject = SecurityUtils.getSubject();
 		return (String) subject.getPrincipal();
 	}
-	
+
 	public static boolean hasRole(String role)
 	{
+		logger.executionTrace();
+
 		final Subject subject = SecurityUtils.getSubject();
 		return subject.hasRole(role);
 	}
-	
+
 	public static boolean[] hasRoles(List<String> roles)
 	{
+		logger.executionTrace();
+
 		final Subject subject = SecurityUtils.getSubject();
 		return subject.hasRoles(roles);
 	}
-	
+
 	public static boolean hasAllRoles(List<String> roles)
 	{
+		logger.executionTrace();
+
 		final Subject subject = SecurityUtils.getSubject();
 		return subject.hasAllRoles(roles);
 	}
-	
+
 	public static boolean hasPermission(String permission)
 	{
+		logger.executionTrace();
+
 		final Subject subject = SecurityUtils.getSubject();
 		return subject.isPermitted(permission);
 	}
 
 	public static boolean[] hasPermission(List<String> permissions)
 	{
+		logger.executionTrace();
+
 		final Subject subject = SecurityUtils.getSubject();
-		final boolean[] permissionList = new boolean [permissions.size()];
-		
+		final boolean[] permissionList = new boolean[permissions.size()];
+
 		for (int i = 0; i < permissions.size(); i++)
 			permissionList[i] = subject.isPermitted(permissions.get(i));
 
@@ -147,8 +170,10 @@ public class SecurityCenter
 
 	public static boolean hasAllPermissions(List<String> permissions)
 	{
+		logger.executionTrace();
+
 		final Subject subject = SecurityUtils.getSubject();
-		
+
 		for (String permission : permissions)
 			if (!subject.isPermitted(permission))
 				return false;

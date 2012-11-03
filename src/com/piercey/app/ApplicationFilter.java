@@ -11,25 +11,27 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.mgt.DefaultSecurityManager;
 import org.apache.shiro.realm.Realm;
-import org.apache.shiro.realm.text.IniRealm;
-
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.servlet.GuiceFilter;
-import com.piercey.app.security.SecurityModule;
+import com.piercey.app.security.AegisModule;
+import com.piercey.app.security.HibernateRealm;
 
 public class ApplicationFilter extends GuiceFilter
 {
+	private static final ApplicationLogger logger = new ApplicationLogger(ApplicationFilter.class);
 	private static Injector applicationInjector;
 	private static Injector securityInjector;
 
 	public static Injector getApplicationInjector()
 	{
+		logger.executionTrace();
 		return applicationInjector;
 	}
 
 	public static Injector getSecurityInjector()
 	{
+		logger.executionTrace();
 		return securityInjector;
 	}
 
@@ -37,24 +39,27 @@ public class ApplicationFilter extends GuiceFilter
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException
 	{
+		logger.executionTrace();
 		super.doFilter(request, response, chain);
 	}
 
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException
 	{
+		logger.executionTrace();
+
 		if (applicationInjector != null)
 			throw new ServletException("application injector already created");
-		
+
 		if (securityInjector != null)
 			throw new ServletException("security injector already created");
-		
-		final Realm realm = new IniRealm();
+
+		final Realm realm = new HibernateRealm();
 		final SecurityManager securityManager = new DefaultSecurityManager(realm);
 		SecurityUtils.setSecurityManager(securityManager);
 
 		applicationInjector = Guice.createInjector(new ApplicationModule());
-		securityInjector = Guice.createInjector(new SecurityModule());
+		securityInjector = Guice.createInjector(new AegisModule());
 
 		super.init(filterConfig);
 	}

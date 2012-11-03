@@ -14,6 +14,7 @@ import com.vaadin.server.VaadinServlet;
 public class ApplicationServlet extends VaadinServlet implements SessionInitListener
 {
 	private static final long serialVersionUID = -2187756856751047938L;
+	private static final ApplicationLogger logger = new ApplicationLogger(ApplicationServlet.class);
 
 	@Inject
 	private ApplicationProvider applicationProvider;
@@ -21,12 +22,14 @@ public class ApplicationServlet extends VaadinServlet implements SessionInitList
 	@Override
 	public void sessionInit(SessionInitEvent event) throws ServiceException
 	{
+		logger.executionTrace();
 		event.getSession().addUIProvider(applicationProvider);
 	}
 	
 	@Override
 	protected DeploymentConfiguration createDeploymentConfiguration(Properties initParameters)
 	{
+		logger.executionTrace();
 		initParameters.setProperty(SERVLET_PARAMETER_PRODUCTION_MODE, "true");
 		return super.createDeploymentConfiguration(initParameters);
 	}
@@ -34,6 +37,7 @@ public class ApplicationServlet extends VaadinServlet implements SessionInitList
 	@Override
 	protected void servletInitialized()
 	{
+		logger.executionTrace();
 		getService().addSessionInitListener(this);
 	}
 }

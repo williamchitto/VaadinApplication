@@ -7,9 +7,13 @@ import com.vaadin.ui.UI;
 
 public class ApplicationModule extends ServletModule
 {
+	private static final ApplicationLogger logger = new ApplicationLogger(ApplicationModule.class);
+	
 	@Override
 	protected void configureServlets()
 	{
+		logger.executionTrace();
+		
 		serve("/*").with(ApplicationServlet.class);
 		bind(String.class).annotatedWith(Names.named("title")).toInstance("Vaadin Application");
 		bind(String.class).annotatedWith(Names.named("version")).toInstance("<b>Vaadin 7 Beta 7</b>");
@@ -18,6 +22,7 @@ public class ApplicationModule extends ServletModule
 	@Provides
 	private Class<? extends UI> provideUIClass()
 	{
+		logger.executionTrace();
 		return ApplicationUI.class;
 	}
 }

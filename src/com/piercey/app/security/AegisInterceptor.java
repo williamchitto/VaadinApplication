@@ -10,9 +10,7 @@ import org.apache.shiro.authz.annotation.RequiresGuest;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.authz.annotation.RequiresUser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import com.piercey.app.ApplicationLogger;
 import com.piercey.app.views.ApplicationView;
 import com.piercey.app.views.LoginView;
 import com.vaadin.navigator.Navigator;
@@ -20,13 +18,15 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.UI;
 
-public class SecurityInterceptor implements MethodInterceptor
+public class AegisInterceptor implements MethodInterceptor
 {
-	private static final Logger logger = LoggerFactory.getLogger(SecurityInterceptor.class);
+	private static final ApplicationLogger logger = new ApplicationLogger(AegisInterceptor.class);
 
 	@Override
 	public Object invoke(MethodInvocation invocation) throws Throwable
 	{
+		//logger.executionTrace();
+		
 		final Class<?> classType = invocation.getMethod().getDeclaringClass();
 		final Method method = invocation.getMethod();
 
@@ -37,11 +37,12 @@ public class SecurityInterceptor implements MethodInterceptor
 
 		try
 		{
-			CheckRequiresAuthentication(classType, method);
-			CheckRequiresUser(classType, method);
-			CheckRequiresGuest(classType, method);
-			CheckRequiresRoles(classType, method);
-			CheckRequiresPermissions(classType, method);
+			final String principal = Aegis.getPrincipal();
+			CheckRequiresAuthentication(classType, method, principal);
+			CheckRequiresUser(classType, method, principal);
+			CheckRequiresGuest(classType, method, principal);
+			CheckRequiresRoles(classType, method, principal);
+			CheckRequiresPermissions(classType, method, principal);
 
 			return invocation.proceed();
 		}
@@ -77,11 +78,10 @@ public class SecurityInterceptor implements MethodInterceptor
 	 * 
 	 * This annotation basically ensures that subject.isAuthenticated() === true
 	 */
-	private void CheckRequiresAuthentication(Class<?> runtimeClass, Method method) throws Throwable
+	private void CheckRequiresAuthentication(Class<?> runtimeClass, Method method, String userName) throws Throwable
 	{
 		final String viewName = runtimeClass.getSimpleName();
 		final String methodName = String.format("%s.%s", viewName, method.getName());
-		final String userName = SecurityCenter.getPrincipal();
 
 		boolean requiresAuthentication = false;
 
@@ -95,7 +95,7 @@ public class SecurityInterceptor implements MethodInterceptor
 			requiresAuthentication = false;
 		}
 
-		if (requiresAuthentication && !SecurityCenter.isAuthenticated())
+		if (requiresAuthentication && !Aegis.isAuthenticated())
 		{
 			final String message = String.format("Authentication failed for %s on %s", userName, viewName);
 			logger.warn(message);
@@ -112,7 +112,7 @@ public class SecurityInterceptor implements MethodInterceptor
 			requiresAuthentication = false;
 		}
 
-		if (requiresAuthentication && !SecurityCenter.isAuthenticated())
+		if (requiresAuthentication && !Aegis.isAuthenticated())
 		{
 			final String message = String.format("Authentication failed for %s on %s", userName, methodName);
 			logger.warn(message);
@@ -131,11 +131,10 @@ public class SecurityInterceptor implements MethodInterceptor
 	 * session. A remembered user is any Subject that has proven their identity at least once, although not necessarily
 	 * during their current session, and asked the system to remember them.
 	 */
-	private void CheckRequiresUser(Class<?> runtimeClass, Method method) throws Throwable
+	private void CheckRequiresUser(Class<?> runtimeClass, Method method, String userName) throws Throwable
 	{
 		final String viewName = runtimeClass.getSimpleName();
 		final String methodName = String.format("%s.%s", viewName, method.getName());
-		final String userName = SecurityCenter.getPrincipal();
 
 		boolean requiresUser = false;
 
@@ -149,7 +148,7 @@ public class SecurityInterceptor implements MethodInterceptor
 			requiresUser = false;
 		}
 
-		if (requiresUser && !(SecurityCenter.isRemembered() || SecurityCenter.isAuthenticated()))
+		if (requiresUser && !(Aegis.isRemembered() || Aegis.isAuthenticated()))
 		{
 			final String message = String.format("Authentication failed for %s on %s", userName, viewName);
 			logger.warn(message);
@@ -166,7 +165,7 @@ public class SecurityInterceptor implements MethodInterceptor
 			requiresUser = false;
 		}
 
-		if (requiresUser && !(SecurityCenter.isRemembered() || SecurityCenter.isAuthenticated()))
+		if (requiresUser && !(Aegis.isRemembered() || Aegis.isAuthenticated()))
 		{
 			final String message = String.format("Authentication failed for %s on %s", userName, methodName);
 			logger.warn(message);
@@ -185,11 +184,10 @@ public class SecurityInterceptor implements MethodInterceptor
 	 * 
 	 * RequiresGuest === subject.getPrincipal() == null.
 	 */
-	private void CheckRequiresGuest(Class<?> runtimeClass, Method method) throws Throwable
+	private void CheckRequiresGuest(Class<?> runtimeClass, Method method, String userName) throws Throwable
 	{
 		final String viewName = runtimeClass.getSimpleName();
 		final String methodName = String.format("%s.%s", viewName, method.getName());
-		final String userName = SecurityCenter.getPrincipal();
 
 		boolean requiresGuest = false;
 
@@ -203,7 +201,7 @@ public class SecurityInterceptor implements MethodInterceptor
 			requiresGuest = false;
 		}
 
-		if (requiresGuest && !SecurityCenter.isGuest())
+		if (requiresGuest && !Aegis.isGuest())
 		{
 			final String message = String.format("Guest role is required for %s on %s", userName, viewName);
 			logger.warn(message);
@@ -220,7 +218,7 @@ public class SecurityInterceptor implements MethodInterceptor
 			requiresGuest = false;
 		}
 
-		if (requiresGuest && !SecurityCenter.isGuest())
+		if (requiresGuest && !Aegis.isGuest())
 		{
 			final String message = String.format("Guest role is required for %s on %s", userName, methodName);
 			logger.warn(message);
@@ -234,11 +232,10 @@ public class SecurityInterceptor implements MethodInterceptor
 	 * This annotation requires the currently executing Subject to have all of the specified roles. If they do not have
 	 * the role(s), the method will not be executed and an AuthorizationException is thrown.
 	 */
-	private void CheckRequiresRoles(Class<?> runtimeClass, Method method) throws Throwable
+	private void CheckRequiresRoles(Class<?> runtimeClass, Method method, String userName) throws Throwable
 	{
 		final String viewName = runtimeClass.getSimpleName();
 		final String methodName = String.format("%s.%s", viewName, method.getName());
-		final String userName = SecurityCenter.getPrincipal();
 
 		boolean requiresRoles = false;
 		List<String> requiredRoles = null;
@@ -254,7 +251,7 @@ public class SecurityInterceptor implements MethodInterceptor
 			requiresRoles = false;
 		}
 
-		if (requiresRoles && requiredRoles != null && !SecurityCenter.hasAllRoles(requiredRoles))
+		if (requiresRoles && requiredRoles != null && !Aegis.hasAllRoles(requiredRoles))
 		{
 			final String message = String.format("Insufficient role membership for %s on %s", userName, viewName);
 			logger.warn(message);
@@ -272,7 +269,7 @@ public class SecurityInterceptor implements MethodInterceptor
 			requiresRoles = false;
 		}
 
-		if (requiresRoles && requiredRoles != null && !SecurityCenter.hasAllRoles(requiredRoles))
+		if (requiresRoles && requiredRoles != null && !Aegis.hasAllRoles(requiredRoles))
 		{
 			final String message = String.format("Insufficient role membership for %s on %s", userName, methodName);
 			logger.warn(message);
@@ -287,11 +284,10 @@ public class SecurityInterceptor implements MethodInterceptor
 	 * annotated method. If the executor's associated Subject determines that the executor does not imply the specified
 	 * permission, the method will not be executed.
 	 */
-	private void CheckRequiresPermissions(Class<?> runtimeClass, Method method) throws Throwable
+	private void CheckRequiresPermissions(Class<?> runtimeClass, Method method, String userName) throws Throwable
 	{
 		final String viewName = runtimeClass.getSimpleName();
 		final String methodName = String.format("%s.%s", viewName, method.getName());
-		final String userName = SecurityCenter.getPrincipal();
 
 		boolean requiresPermissions = false;
 		List<String> requiredPermissions = null;
@@ -308,7 +304,7 @@ public class SecurityInterceptor implements MethodInterceptor
 		}
 
 		if (requiresPermissions && requiredPermissions != null
-				&& !SecurityCenter.hasAllPermissions(requiredPermissions))
+				&& !Aegis.hasAllPermissions(requiredPermissions))
 		{
 			final String message = String.format("Insufficient permission for %s on %s", userName, viewName);
 			logger.warn(message);
@@ -327,11 +323,61 @@ public class SecurityInterceptor implements MethodInterceptor
 		}
 
 		if (requiresPermissions && requiredPermissions != null
-				&& !SecurityCenter.hasAllPermissions(requiredPermissions))
+				&& !Aegis.hasAllPermissions(requiredPermissions))
 		{
 			final String message = String.format("Insufficient permission for %s on %s", userName, methodName);
 			logger.warn(message);
 			throw new AuthorizationException(message);
+		}
+	}
+	
+	public class AuthenticationException extends Exception
+	{
+		private static final long serialVersionUID = -7385155171164478603L;
+
+		public AuthenticationException()
+		{
+			super();
+		}
+
+		public AuthenticationException(String message, Throwable cause)
+		{
+			super(message, cause);
+		}
+
+		public AuthenticationException(String message)
+		{
+			super(message);
+		}
+
+		public AuthenticationException(Throwable cause)
+		{
+			super(cause);
+		}
+	}
+
+	public class AuthorizationException extends Exception
+	{
+		private static final long serialVersionUID = -7385155171164478603L;
+
+		public AuthorizationException()
+		{
+			super();
+		}
+
+		public AuthorizationException(String message, Throwable cause)
+		{
+			super(message, cause);
+		}
+
+		public AuthorizationException(String message)
+		{
+			super(message);
+		}
+
+		public AuthorizationException(Throwable cause)
+		{
+			super(cause);
 		}
 	}
 }

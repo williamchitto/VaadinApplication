@@ -1,6 +1,6 @@
 package com.piercey.app.views;
 
-import com.piercey.app.security.SecurityCenter;
+import com.piercey.app.security.Aegis;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.ExternalResource;
@@ -31,7 +31,7 @@ public class ApplicationView extends Panel implements View
 		{
 			public void buttonClick(ClickEvent event)
 			{
-				SecurityCenter.logout();
+				Aegis.logout();
 				UI.getCurrent().getNavigator().navigateTo(LoginView.NAME);
 			}
 		});
