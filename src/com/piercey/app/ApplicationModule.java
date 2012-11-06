@@ -13,7 +13,6 @@ public class ApplicationModule extends ServletModule
 	protected void configureServlets()
 	{
 		logger.executionTrace();
-		
 		serve("/*").with(ApplicationServlet.class);
 		bind(String.class).annotatedWith(Names.named("title")).toInstance("Vaadin Application");
 		bind(String.class).annotatedWith(Names.named("version")).toInstance("<b>Vaadin 7 Beta 7</b>");

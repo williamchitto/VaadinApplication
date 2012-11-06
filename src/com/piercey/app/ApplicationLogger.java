@@ -16,92 +16,77 @@ public class ApplicationLogger
 
 	public void error(String message)
 	{
-		if (logger.isTraceEnabled()) // speed-up when not erring
-			logger.error(message);
+		logger.error(message);
 	}
 
 	public void error(Throwable exception)
 	{
-		if (logger.isTraceEnabled()) // speed-up when not erring
-			logger.error(unwindStack(exception));
+		logger.error(unwindStack(exception));
 	}
 
 	public void error(String message, Throwable exception)
 	{
-		if (logger.isTraceEnabled()) // speed-up when not erring
-			logger.error(message + ": " + unwindStack(exception));
+		logger.error(message + ": " + unwindStack(exception));
 	}
 
 	public void info(String message)
 	{
-		if (logger.isInfoEnabled()) // speed-up when not informing
-			logger.info(message);
+		logger.info(message);
 	}
 
 	public void info(Throwable exception)
 	{
-		if (logger.isInfoEnabled()) // speed-up when not informing
-			logger.info(unwindStack(exception));
+		logger.info(unwindStack(exception));
 	}
 
 	public void info(String message, Throwable exception)
 	{
-		if (logger.isInfoEnabled()) // speed-up when not informing
-			logger.info(message + ": " + unwindStack(exception));
+		logger.info(message + ": " + unwindStack(exception));
 	}
 
 	public void warn(String message)
 	{
-		if (logger.isWarnEnabled()) // speed-up when not warning
-			logger.warn(message);
+		logger.warn(message);
 	}
 
 	public void warn(Throwable exception)
 	{
-		if (logger.isWarnEnabled()) // speed-up when not warning
-			logger.warn(unwindStack(exception));
+		logger.warn(unwindStack(exception));
 	}
 
 	public void warn(String message, Throwable exception)
 	{
-		if (logger.isWarnEnabled()) // speed-up when not warning
-			logger.warn(message + ": " + unwindStack(exception));
+		logger.warn(message + ": " + unwindStack(exception));
 	}
 
 	public void debug(String message)
 	{
-		if (logger.isDebugEnabled()) // speed-up when not debugging
-			logger.debug(message);
+		logger.debug(message);
 	}
 
 	public void debug(Throwable exception)
 	{
-		if (logger.isDebugEnabled()) // speed-up when not debugging
-			logger.debug(unwindStack(exception));
+		logger.debug(unwindStack(exception));
 	}
 
 	public void debug(String message, Throwable exception)
 	{
-		if (logger.isDebugEnabled()) // speed-up when not debugging
-			logger.debug(message + ": " + unwindStack(exception));
+		logger.debug(message + ": " + unwindStack(exception));
 	}
 
 	public void trace(String message)
 	{
-		if (logger.isTraceEnabled()) // speed-up when not tracing
-			logger.trace(message);
+		logger.trace(message);
 	}
 
 	public void trace(Throwable exception)
 	{
-		if (logger.isTraceEnabled()) // speed-up when not tracing
-			logger.trace(unwindStack(exception));
+		logger.trace(unwindStack(exception));
 	}
 
 	public void trace(String message, Throwable exception)
 	{
-		if (logger.isTraceEnabled()) // speed-up when not tracing
-			logger.trace(message + ": " + unwindStack(exception));
+		logger.trace(message + ": " + unwindStack(exception));
 	}
 
 	public void executionTrace()

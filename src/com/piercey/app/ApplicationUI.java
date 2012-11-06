@@ -3,8 +3,6 @@ package com.piercey.app;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.name.Named;
-import com.piercey.app.security.Aegis;
-import com.piercey.app.security.HibernateUtil;
 import com.piercey.app.views.ApplicationView;
 import com.piercey.app.views.LoginView;
 import com.vaadin.navigator.Navigator;
@@ -18,7 +16,6 @@ public class ApplicationUI extends UI
 	private static final long serialVersionUID = 6786857451870760567L;
 	private static final ApplicationLogger logger = new ApplicationLogger(ApplicationUI.class);
 	public static final String LOGINVIEW = LoginView.NAME;
-	private Navigator navigator;
 	
 	@Inject
 	@Named("title")
@@ -32,9 +29,11 @@ public class ApplicationUI extends UI
 	public void init(VaadinRequest request)
 	{
 		logger.executionTrace();
-		HibernateUtil.getSessionFactory(); // Initialize...
+		DatabaseUtil.getSessionFactory(); // Initialize...
 
-		navigator = new Navigator(this, getContent());
+		final Navigator navigator = new Navigator(this, getContent());
+		setNavigator(navigator);
+		
 		navigator.addProvider(new ViewProvider()
 		{
 			private static final long serialVersionUID = -3308179049710571790L;
@@ -68,7 +67,7 @@ public class ApplicationUI extends UI
 			}
 		});
 		
-		final String viewName = (Aegis.isAuthenticated())
+		final String viewName = (ApplicationSecurity.isAuthenticated())
 				? ApplicationView.NAME
 				: LoginView.NAME;
 

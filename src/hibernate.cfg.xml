@@ -15,9 +15,9 @@
 		<property name="show_sql">true</property>
 		
 		<!-- Security Entities -->
-		<mapping class="com.piercey.app.security.entity.Account" />
-		<mapping class="com.piercey.app.security.entity.Role" />
-		<mapping class="com.piercey.app.security.entity.Permission" />
+		<mapping class="com.piercey.app.entities.Account" />
+		<mapping class="com.piercey.app.entities.Role" />
+		<mapping class="com.piercey.app.entities.Permission" />
 				
 	</session-factory>
 </hibernate-configuration>

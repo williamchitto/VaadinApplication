@@ -8,14 +8,13 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.mgt.DefaultSecurityManager;
+import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.realm.Realm;
+
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.servlet.GuiceFilter;
-import com.piercey.app.security.AegisModule;
-import com.piercey.app.security.HibernateRealm;
 
 public class ApplicationFilter extends GuiceFilter
 {
@@ -54,12 +53,12 @@ public class ApplicationFilter extends GuiceFilter
 		if (securityInjector != null)
 			throw new ServletException("security injector already created");
 
-		final Realm realm = new HibernateRealm();
-		final SecurityManager securityManager = new DefaultSecurityManager(realm);
-		SecurityUtils.setSecurityManager(securityManager);
-
+		 final Realm realm = new ApplicationSecurityRealm();
+		 final SecurityManager securityManager = new DefaultSecurityManager(realm);
+		 SecurityUtils.setSecurityManager(securityManager);
+		
 		applicationInjector = Guice.createInjector(new ApplicationModule());
-		securityInjector = Guice.createInjector(new AegisModule());
+		securityInjector = Guice.createInjector(new ApplicationSecurityModule());
 
 		super.init(filterConfig);
 	}

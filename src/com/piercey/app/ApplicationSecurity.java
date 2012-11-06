@@ -1,4 +1,4 @@
-package com.piercey.app.security;
+package com.piercey.app;
 
 import java.util.List;
 
@@ -9,21 +9,17 @@ import org.apache.shiro.authc.LockedAccountException;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
-import com.piercey.app.ApplicationLogger;
-import com.piercey.app.security.entity.Account;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 
-public class Aegis
+public class ApplicationSecurity
 {
-	private static final ApplicationLogger logger = new ApplicationLogger(Aegis.class);
+	private static final ApplicationLogger logger = new ApplicationLogger(ApplicationSecurity.class);
 
 	public static boolean login(String username, String password, boolean rememberMe)
 	{
 		logger.executionTrace();
-
 		final Subject subject = SecurityUtils.getSubject();
-		final Account account = new Account(username, password, "zz"); // use to hash the password
 
 		try
 		{
@@ -31,9 +27,8 @@ public class Aegis
 
 			if (!subject.isAuthenticated())
 			{
-				final UsernamePasswordToken token = new UsernamePasswordToken(username, account.getPassword());
+				final UsernamePasswordToken token = new UsernamePasswordToken(username, password);
 				token.setRememberMe(rememberMe);
-
 				subject.login(token);
 			}
 
@@ -42,17 +37,20 @@ public class Aegis
 		}
 		catch (UnknownAccountException e)
 		{
-			logger.warn(String.format("Login failed for %s: %s", subject.getPrincipal(), e.getMessage()));
+			logger.warn(String.format("Login failed for %s: %s", username, e.getMessage()));
+			logger.debug(e);
 			Notification.show("Invalid Credentials", Type.WARNING_MESSAGE);
 		}
 		catch (IncorrectCredentialsException e)
 		{
-			logger.warn(String.format("Login failed for %s: %s", subject.getPrincipal(), e.getMessage()));
+			logger.warn(String.format("Login failed for %s: %s", username, e.getMessage()));
+			logger.debug(e);
 			Notification.show("Invalid Credentials", Type.WARNING_MESSAGE);
 		}
 		catch (LockedAccountException e)
 		{
-			logger.warn(String.format("Login failed for %s: %s", subject.getPrincipal(), e.getMessage()));
+			logger.warn(String.format("Login failed for %s: %s", username, e.getMessage()));
+			logger.debug(e);
 			Notification.show("Account is Locked", Type.WARNING_MESSAGE);
 		}
 		catch (AuthenticationException e)
@@ -66,7 +64,7 @@ public class Aegis
 			Notification.show("Unknown System Error", Type.WARNING_MESSAGE);
 		}
 
-		logger.info(String.format("Login failed for %s", subject.getPrincipal()));
+		logger.info(String.format("Login failed for %s", username));
 		return false;
 	}
 

@@ -1,4 +1,4 @@
-package com.piercey.app.security;
+package com.piercey.app;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -17,26 +17,28 @@ import org.apache.shiro.realm.jdbc.JdbcRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import com.piercey.app.ApplicationLogger;
-import com.piercey.app.security.entity.Account;
-import com.piercey.app.security.entity.Permission;
-import com.piercey.app.security.entity.Role;
 
-public class HibernateRealm extends JdbcRealm
+import com.piercey.app.entities.Account;
+import com.piercey.app.entities.Permission;
+import com.piercey.app.entities.Role;
+
+public class ApplicationSecurityRealm extends JdbcRealm
 {
-	private static final ApplicationLogger logger = new ApplicationLogger(HibernateRealm.class);
+	private static final ApplicationLogger logger = new ApplicationLogger(ApplicationSecurityRealm.class);
 
 	@Override
 	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException
 	{
 		logger.executionTrace();
 
-		final UsernamePasswordToken sernamePasswordToken = (UsernamePasswordToken) token;
-		final Account account = getAccount(sernamePasswordToken.getUsername());
+		final UsernamePasswordToken authToken = (UsernamePasswordToken) token;
 
-		return (account != null)
-				? new SimpleAuthenticationInfo(account.getUsername(), account.getPassword(), getName())
-				: null;
+		final SimpleAuthenticationInfo authInfo = new SimpleAuthenticationInfo(
+				authToken.getUsername(),
+				authToken.getPassword(),
+				getName());
+
+		return authInfo;
 	}
 
 	@Override
@@ -100,7 +102,7 @@ public class HibernateRealm extends JdbcRealm
 	{
 		logger.executionTrace();
 
-		final Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		final Session session = DatabaseUtil.getSessionFactory().getCurrentSession();
 
 		final Query query = session.createSQLQuery(
 				"select * from Account x where x.username = :zzz")
@@ -114,7 +116,7 @@ public class HibernateRealm extends JdbcRealm
 	{
 		logger.executionTrace();
 
-		final Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		final Session session = DatabaseUtil.getSessionFactory().getCurrentSession();
 
 		final Query query = session.createSQLQuery(
 				"select * from Role x where x.roleName = :zzz")

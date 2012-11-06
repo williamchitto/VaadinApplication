@@ -1,4 +1,4 @@
-package com.piercey.app.security.entity;
+package com.piercey.app.entities;
 
 import java.util.HashSet;
 import java.util.Set;

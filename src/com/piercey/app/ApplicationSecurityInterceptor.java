@@ -1,4 +1,4 @@
-package com.piercey.app.security;
+package com.piercey.app;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -10,7 +10,6 @@ import org.apache.shiro.authz.annotation.RequiresGuest;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.authz.annotation.RequiresUser;
-import com.piercey.app.ApplicationLogger;
 import com.piercey.app.views.ApplicationView;
 import com.piercey.app.views.LoginView;
 import com.vaadin.navigator.Navigator;
@@ -18,9 +17,9 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.UI;
 
-public class AegisInterceptor implements MethodInterceptor
+public class ApplicationSecurityInterceptor implements MethodInterceptor
 {
-	private static final ApplicationLogger logger = new ApplicationLogger(AegisInterceptor.class);
+	private static final ApplicationLogger logger = new ApplicationLogger(ApplicationSecurityInterceptor.class);
 
 	@Override
 	public Object invoke(MethodInvocation invocation) throws Throwable
@@ -37,7 +36,7 @@ public class AegisInterceptor implements MethodInterceptor
 
 		try
 		{
-			final String principal = Aegis.getPrincipal();
+			final String principal = ApplicationSecurity.getPrincipal();
 			CheckRequiresAuthentication(classType, method, principal);
 			CheckRequiresUser(classType, method, principal);
 			CheckRequiresGuest(classType, method, principal);
@@ -95,7 +94,7 @@ public class AegisInterceptor implements MethodInterceptor
 			requiresAuthentication = false;
 		}
 
-		if (requiresAuthentication && !Aegis.isAuthenticated())
+		if (requiresAuthentication && !ApplicationSecurity.isAuthenticated())
 		{
 			final String message = String.format("Authentication failed for %s on %s", userName, viewName);
 			logger.warn(message);
@@ -112,7 +111,7 @@ public class AegisInterceptor implements MethodInterceptor
 			requiresAuthentication = false;
 		}
 
-		if (requiresAuthentication && !Aegis.isAuthenticated())
+		if (requiresAuthentication && !ApplicationSecurity.isAuthenticated())
 		{
 			final String message = String.format("Authentication failed for %s on %s", userName, methodName);
 			logger.warn(message);
@@ -148,7 +147,7 @@ public class AegisInterceptor implements MethodInterceptor
 			requiresUser = false;
 		}
 
-		if (requiresUser && !(Aegis.isRemembered() || Aegis.isAuthenticated()))
+		if (requiresUser && !(ApplicationSecurity.isRemembered() || ApplicationSecurity.isAuthenticated()))
 		{
 			final String message = String.format("Authentication failed for %s on %s", userName, viewName);
 			logger.warn(message);
@@ -165,7 +164,7 @@ public class AegisInterceptor implements MethodInterceptor
 			requiresUser = false;
 		}
 
-		if (requiresUser && !(Aegis.isRemembered() || Aegis.isAuthenticated()))
+		if (requiresUser && !(ApplicationSecurity.isRemembered() || ApplicationSecurity.isAuthenticated()))
 		{
 			final String message = String.format("Authentication failed for %s on %s", userName, methodName);
 			logger.warn(message);
@@ -201,7 +200,7 @@ public class AegisInterceptor implements MethodInterceptor
 			requiresGuest = false;
 		}
 
-		if (requiresGuest && !Aegis.isGuest())
+		if (requiresGuest && !ApplicationSecurity.isGuest())
 		{
 			final String message = String.format("Guest role is required for %s on %s", userName, viewName);
 			logger.warn(message);
@@ -218,7 +217,7 @@ public class AegisInterceptor implements MethodInterceptor
 			requiresGuest = false;
 		}
 
-		if (requiresGuest && !Aegis.isGuest())
+		if (requiresGuest && !ApplicationSecurity.isGuest())
 		{
 			final String message = String.format("Guest role is required for %s on %s", userName, methodName);
 			logger.warn(message);
@@ -251,7 +250,7 @@ public class AegisInterceptor implements MethodInterceptor
 			requiresRoles = false;
 		}
 
-		if (requiresRoles && requiredRoles != null && !Aegis.hasAllRoles(requiredRoles))
+		if (requiresRoles && requiredRoles != null && !ApplicationSecurity.hasAllRoles(requiredRoles))
 		{
 			final String message = String.format("Insufficient role membership for %s on %s", userName, viewName);
 			logger.warn(message);
@@ -269,7 +268,7 @@ public class AegisInterceptor implements MethodInterceptor
 			requiresRoles = false;
 		}
 
-		if (requiresRoles && requiredRoles != null && !Aegis.hasAllRoles(requiredRoles))
+		if (requiresRoles && requiredRoles != null && !ApplicationSecurity.hasAllRoles(requiredRoles))
 		{
 			final String message = String.format("Insufficient role membership for %s on %s", userName, methodName);
 			logger.warn(message);
@@ -304,7 +303,7 @@ public class AegisInterceptor implements MethodInterceptor
 		}
 
 		if (requiresPermissions && requiredPermissions != null
-				&& !Aegis.hasAllPermissions(requiredPermissions))
+				&& !ApplicationSecurity.hasAllPermissions(requiredPermissions))
 		{
 			final String message = String.format("Insufficient permission for %s on %s", userName, viewName);
 			logger.warn(message);
@@ -323,7 +322,7 @@ public class AegisInterceptor implements MethodInterceptor
 		}
 
 		if (requiresPermissions && requiredPermissions != null
-				&& !Aegis.hasAllPermissions(requiredPermissions))
+				&& !ApplicationSecurity.hasAllPermissions(requiredPermissions))
 		{
 			final String message = String.format("Insufficient permission for %s on %s", userName, methodName);
 			logger.warn(message);

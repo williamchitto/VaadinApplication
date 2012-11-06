@@ -1,4 +1,4 @@
-package com.piercey.app.security.entity;
+package com.piercey.app.entities;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -14,9 +14,6 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import org.apache.shiro.crypto.RandomNumberGenerator;
-import org.apache.shiro.crypto.SecureRandomNumberGenerator;
-import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
@@ -96,9 +93,7 @@ public class Account
 
 	public void setPassword(String password)
 	{
-		final RandomNumberGenerator random = new SecureRandomNumberGenerator();
-		this.salt = random.nextBytes().toBase64();
-		this.password = new Sha256Hash(password, salt, 1024).toBase64();
+		this.password = password;
 	}
 
 	@Column(name = "salt", nullable = false)

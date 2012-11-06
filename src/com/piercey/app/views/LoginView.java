@@ -1,6 +1,6 @@
 package com.piercey.app.views;
 
-import com.piercey.app.security.Aegis;
+import com.piercey.app.ApplicationSecurity;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
@@ -37,10 +37,13 @@ public class LoginView extends Panel implements View
 
 		username.focus();
 		
-		if (Aegis.isRemembered())
+		username.setValue("admin");
+		password.setValue("admin");
+		
+		if (ApplicationSecurity.isRemembered())
 		{
-			username.setValue(Aegis.whoIsRemembered());
-			rememberMe.setValue(Aegis.isRemembered());
+			username.setValue(ApplicationSecurity.whoIsRemembered());
+			rememberMe.setValue(ApplicationSecurity.isRemembered());
 			password.focus();
 		}
 
@@ -50,7 +53,7 @@ public class LoginView extends Panel implements View
 			public void buttonClick(ClickEvent event)
 			{
 				final Navigator navigator = UI.getCurrent().getNavigator();
-				if (Aegis.login(username.getValue(), password.getValue(), rememberMe.getValue()))
+				if (ApplicationSecurity.login(username.getValue(), password.getValue(), rememberMe.getValue()))
 				{
 					final String location = (fragmentAndParameters == null)
 							? ApplicationView.NAME
