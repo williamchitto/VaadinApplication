@@ -1,6 +1,6 @@
 package com.piercey.app.views;
 
-import com.piercey.app.ApplicationSecurity;
+import com.piercey.app.framework.ApplicationSecurity;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
@@ -37,6 +37,7 @@ public class LoginView extends Panel implements View
 
 		username.focus();
 		
+		// TODO: Remove these two lines before production release
 		username.setValue("admin");
 		password.setValue("admin");
 		

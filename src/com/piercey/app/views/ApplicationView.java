@@ -1,6 +1,6 @@
 package com.piercey.app.views;
 
-import com.piercey.app.ApplicationSecurity;
+import com.piercey.app.framework.ApplicationSecurity;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.ExternalResource;

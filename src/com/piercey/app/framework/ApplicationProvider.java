@@ -1,4 +1,4 @@
-package com.piercey.app;
+package com.piercey.app.framework;
 
 import com.google.inject.Inject;
 import com.vaadin.server.UIClassSelectionEvent;

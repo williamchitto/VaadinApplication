@@ -14,7 +14,7 @@
 	
 	<filter>
 		<filter-name>ApplicationFilter</filter-name>
-		<filter-class>com.piercey.app.ApplicationFilter</filter-class>
+		<filter-class>com.piercey.app.framework.ApplicationFilter</filter-class>
 	</filter>
 	<filter-mapping>
 		<filter-name>ApplicationFilter</filter-name>

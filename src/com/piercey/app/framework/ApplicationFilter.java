@@ -1,4 +1,4 @@
-package com.piercey.app;
+package com.piercey.app.framework;
 
 import java.io.IOException;
 import javax.servlet.FilterChain;

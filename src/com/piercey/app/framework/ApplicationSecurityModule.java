@@ -1,4 +1,4 @@
-package com.piercey.app;
+package com.piercey.app.framework;
 
 import java.lang.reflect.Method;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;

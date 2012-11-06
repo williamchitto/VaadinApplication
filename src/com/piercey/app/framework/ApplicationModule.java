@@ -1,8 +1,9 @@
-package com.piercey.app;
+package com.piercey.app.framework;
 
 import com.google.inject.Provides;
 import com.google.inject.name.Names;
 import com.google.inject.servlet.ServletModule;
+import com.piercey.app.ApplicationUI;
 import com.vaadin.ui.UI;
 
 public class ApplicationModule extends ServletModule

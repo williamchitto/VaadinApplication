@@ -1,4 +1,4 @@
-package com.piercey.app;
+package com.piercey.app.framework;
 
 import java.sql.Connection;
 import java.sql.SQLException;
