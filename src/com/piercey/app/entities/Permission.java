@@ -22,6 +22,7 @@ public class Permission
 	private String id;
 	private String permissionName;
 	private String description;
+	
 	private Set<Role> roles = new HashSet<Role>(0);
 
 	public Permission()

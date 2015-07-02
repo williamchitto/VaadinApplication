@@ -8,6 +8,7 @@ import com.vaadin.ui.Panel;
 public class MessageView extends Panel implements View
 {
 	private static final long serialVersionUID = -7650094489274659106L;
+	
 	public static final String NAME = "MessageView";
 
 	public MessageView()
@@ -15,6 +16,7 @@ public class MessageView extends Panel implements View
 		setCaption("Messages");
 	}
 
+	
 	@Override
 	public void enter(ViewChangeEvent event)
 	{

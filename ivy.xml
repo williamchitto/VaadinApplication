@@ -55,7 +55,12 @@
 		<dependency org="org.slf4j" name="slf4j-log4j12" rev="&slf4j.version;"/>
 		<dependency org="log4j" name="log4j" rev="&log4j.version;"/>
 
-		<!-- HyperSQL Database -->
-        <dependency org="org.hsqldb" name="hsqldb" rev="&hsqldb.version;"/>
+		<!-- Postgres Database -->
+<dependency org="org.postgresql" name="postgresql" rev="9.4-1201-jdbc41"/>
+
+        
+        
+        
+        
 	</dependencies>
 </ivy-module>

@@ -1,5 +1,7 @@
 package com.piercey.app.views;
 
+import org.hibernate.transform.ToListResultTransformer;
+
 import com.piercey.app.framework.ApplicationSecurity;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
@@ -25,6 +27,10 @@ public class ApplicationView extends Panel implements View
 
 		lnk = new Link("Message: Bye", new ExternalResource("#!" + MessageView.NAME + "/Bye/Goodbye"));
 		addComponent(lnk);
+		
+		lnk = new Link("Role", new ExternalResource("#!" + RoleView.NAME ));
+		addComponent(lnk);
+
 
 		@SuppressWarnings("serial")
 		Button logout = new Button("Logout", new Button.ClickListener()
