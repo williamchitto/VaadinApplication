@@ -14,6 +14,7 @@ import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewProvider;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.ui.UI;
+import com.vaadin.ui.VerticalLayout;
 
 public class ApplicationUI extends UI
 {
@@ -29,15 +30,17 @@ public class ApplicationUI extends UI
 	@Named("version")
 	private String version = "Vaadin <i>version unknown</i>";
 
+	private VerticalLayout layout = new VerticalLayout();  
+	
 	@Override
 	public void init(VaadinRequest request)
 	{
 		logger.executionTrace();
 		DatabaseUtil.getSessionFactory(); // Initialize...
 
-		final Navigator navigator = new Navigator(this, getContent());
+		final Navigator navigator = new Navigator(this, layout);
 		setNavigator(navigator);
-		
+		this.setContent(layout);		
 		navigator.addProvider(new ViewProvider()
 		{
 			private static final long serialVersionUID = -3308179049710571790L;

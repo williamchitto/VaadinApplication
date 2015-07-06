@@ -1,3 +1,4 @@
 /build
 .classpath
 .settings/com.vaadin.integration.eclipse.prefs
+WebContent/VAADIN/widgetsets/*

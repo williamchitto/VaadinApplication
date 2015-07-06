@@ -5,10 +5,10 @@ import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.Panel;
+import com.vaadin.ui.VerticalLayout;
 
 @RequiresAuthentication
-public class CountView extends Panel implements View
+public class CountView extends VerticalLayout implements View
 {
 	private static final long serialVersionUID = -2117139212682899698L;
 	public static final String NAME = "CountView";
